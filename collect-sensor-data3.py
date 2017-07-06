@@ -87,6 +87,8 @@ def collectSensorData():
                 
                 print('Received: {0}'.format(received))
                 print(strftime("%Y-%m-%d %H:%M:%S "))
+                uart.write('good')
+                print('Sent good')
             else:
                 # Timeout waiting for data, None is returned.
                 
