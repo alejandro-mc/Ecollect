@@ -7,6 +7,7 @@ class WeatherStation:
     '''Handles connection to weather station feed
     and extraction of temperature,pressure and humidity from raw response'''
     def __init__(self,url):
+        self.__id__          = None
         self.__timeupdated__ = None 
         self.__temp__        = None
         self.__pressure__    = None
@@ -20,7 +21,8 @@ class WeatherStation:
         self.raw = rawtxt
         
         #parse xml to get data
-        (self.__temp__,
+        (self.__id__,
+         self.__temp__,
          self.__pressure__,
          self.__humidity__,
          self.__timeupdated__) = self.__parse__(rawtxt)
@@ -28,15 +30,20 @@ class WeatherStation:
     def __parse__(self,raw):
         tree = ET.fromstring(raw)
         
-        str_temp_f            = [i for i in tree.find('temp_f').itertext()     ][0]
-        str_pressure_mb       = [i for i in tree.find('pressure_mb').itertext()][0]
+        str_id                = [i for i in tree.find('station_id').itertext()     ][0]
+        str_temp_f            = [i for i in tree.find('temp_f').itertext()         ][0]
+        str_pressure_mb       = [i for i in tree.find('pressure_mb').itertext()    ][0]
         str_relative_humidity = [i for i in tree.find('relative_humidity').itertext()][0]
         str_time              = [i for i in tree.find('observation_time_rfc822').itertext()][0]
         
-        return (float(str_temp_f           ),
+        return (str_id,
+                float(str_temp_f           ),
                 float(str_pressure_mb      ),
                 float(str_relative_humidity),
                 parsedate_to_datetime(str_time))
+    
+    def ID(self):
+        return self.__id__
     
     def temp(self):
         return self.__temp__
