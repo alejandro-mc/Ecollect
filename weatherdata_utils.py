@@ -8,7 +8,7 @@ class WeatherStation:
     and extraction of temperature,pressure and humidity from raw response'''
     def __init__(self,url):
         self.__id__          = None
-        self.__timeupdated__ = None 
+        self.__timeupdated__ = dt.datetime(1960,1,1,tzinfo=dt.timezone.utc)#initialized to a date in the past
         self.__temp__        = None
         self.__pressure__    = None
         self.__humidity__    = None
@@ -20,12 +20,24 @@ class WeatherStation:
         rawtxt = http.urlopen(self.__url__).read()
         self.raw = rawtxt
         
-        #parse xml to get data
-        (self.__id__,
-         self.__temp__,
-         self.__pressure__,
-         self.__humidity__,
-         self.__timeupdated__) = self.__parse__(rawtxt)
+        #parse xml to get data 
+        (ID,
+         temp,
+         pressure,
+         humidity,
+         timeupdated)= newData = self.__parse__(rawtxt)
+        
+        #update if the data is new
+        if timeupdated > self.__timeupdated__:
+            (self.__id__,
+             self.__temp__,
+             self.__pressure__,
+             self.__humidity__,
+             self.__timeupdated__) = newData
+            
+            return True
+        else:
+            return False
     
     def __parse__(self,raw):
         tree = ET.fromstring(raw)
