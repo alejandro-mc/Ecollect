@@ -17,7 +17,12 @@ class WeatherStation:
     
     def update(self):
         #get raw data from url
-        rawtxt = http.urlopen(self.__url__).read()
+        try:
+            rawtxt = http.urlopen(self.__url__).read()
+        except:
+            print('Couldn\'t Open URL.')
+            return False
+                
         self.raw = rawtxt
         
         #parse xml to get data 
