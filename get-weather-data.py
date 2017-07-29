@@ -26,8 +26,8 @@ while True:
                 
                 print('station',st.ID(),'was updated')
 
-                wd.write('{0},{1},{2},{3},{4}\n'.format(st.time(),st.ID(),st.temp(),
-                                                            st.humidity(),st.pressure()))
+                wd.write('{0},{1},{2},{3},{4},{5}\n'.format(st.time(),st.ID(),st.temp(),
+                                                            st.humidity(),st.pressure(),st.wind_speed()))
     
     print('going to sleep ..')
     sleep(15*60)

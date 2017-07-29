@@ -12,6 +12,7 @@ class WeatherStation:
         self.__temp__        = None
         self.__pressure__    = None
         self.__humidity__    = None
+        self.__windspeed__   = None
         self.__url__         = url
         self.raw=""
     
@@ -26,11 +27,16 @@ class WeatherStation:
         self.raw = rawtxt
         
         #parse xml to get data 
-        (ID,
-         temp,
-         pressure,
-         humidity,
-         timeupdated)= newData = self.__parse__(rawtxt)
+        try:
+            (ID,
+             temp,
+             pressure,
+             humidity,
+             timeupdated,
+             windspeed)= newData = self.__parse__(rawtxt)
+        except:
+            print('Parsing Error, Data was either missing or in an unexpected format.')
+            return False
         
         #update if the data is new
         if timeupdated > self.__timeupdated__:
@@ -38,7 +44,8 @@ class WeatherStation:
              self.__temp__,
              self.__pressure__,
              self.__humidity__,
-             self.__timeupdated__) = newData
+             self.__timeupdated__,
+             self.__windspeed__) = newData
             
             return True
         else:
@@ -52,12 +59,14 @@ class WeatherStation:
         str_pressure_mb       = [i for i in tree.find('pressure_mb').itertext()    ][0]
         str_relative_humidity = [i for i in tree.find('relative_humidity').itertext()][0]
         str_time              = [i for i in tree.find('observation_time_rfc822').itertext()][0]
+        str_wind_speed        = [i for i in tree.find('wind_mph').itertext()         ][0]
         
         return (str_id,
                 float(str_temp_f           ),
                 float(str_pressure_mb      ),
                 float(str_relative_humidity),
-                parsedate_to_datetime(str_time))
+                parsedate_to_datetime(str_time),
+                float(str_wind_speed))
     
     def ID(self):
         return self.__id__
@@ -72,3 +81,5 @@ class WeatherStation:
         return self.__humidity__
     def time(self):
         return self.__timeupdated__
+    def wind_speed(self):
+        return self.__windspeed__
